@@ -93,10 +93,10 @@ userSchema.pre("save", async function (next) {
   //Random Set alloc
   console.log("saving a new set to db");
 
-  let totalQuestions = 30;
+  let totalQuestions = 20;
   let set = new Array(totalQuestions).fill(0);
 
-  let totalQuestions_user = 15;
+  let totalQuestions_user = 5;
   let randomqs = new Array(totalQuestions_user).fill(-1);
 
   await generate(randomqs, set, totalQuestions);
@@ -131,13 +131,13 @@ userSchema.statics.login = async function (email, password) {
 
 async function generate(randomqs, set, totalQuestions) {
   const easyidx = 0;
-  const medidx = 10;
-  const hardidx = 20;
+  const medidx = 2;
+  const hardidx = 4;
 
   //change number of easy/med/hard questions to be solved by the user.
-  const easy_questions = 10;
-  const med_questions = 10;
-  const hard_questions = 10;
+  const easy_questions = 2;
+  const med_questions = 2;
+  const hard_questions = 1;
 
   await generate_easy(easy_questions, 0, easyidx, randomqs, set, totalQuestions);
   await generate_med(med_questions, 0, medidx, randomqs, set, totalQuestions);
@@ -146,7 +146,7 @@ async function generate(randomqs, set, totalQuestions) {
 
 async function generate_easy(easy, curr, idx1, randomqs, set, totalQuestions) {
   if (easy == curr) return;
-  randomIndex1 = Math.floor(Math.random() * (14));
+  randomIndex1 = Math.floor(Math.random() * (8 - 1 + 1) + 1);
 
   try {
     let doc = await Question.findOne({ index: randomIndex1 });
@@ -170,7 +170,7 @@ async function generate_easy(easy, curr, idx1, randomqs, set, totalQuestions) {
 async function generate_med(med, curr, idx2, randomqs, set, totalQuestions) {
   if (med == curr) return;
   // randomIndex = Math.floor(Math.random() * (totalQuestions + 1));
-  randomIndex2 = 14 + Math.floor(Math.random() * (14));
+  randomIndex2 = Math.floor(Math.random() * (16 - 9 + 1) + 9)
   try {
     let doc = await Question.findOne({ index: randomIndex2 });
 
@@ -192,7 +192,7 @@ async function generate_med(med, curr, idx2, randomqs, set, totalQuestions) {
 
 async function generate_hard(hard, curr, idx3, randomqs, set, totalQuestions) {
   if (hard == curr) return;
-  randomIndex3 = 28 + Math.floor(Math.random() * (11));
+  randomIndex3 = Math.floor(Math.random() * (20 - 17 + 1) + 17)
   try {
     let doc = await Question.findOne({ index: randomIndex3 });
 

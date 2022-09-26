@@ -136,26 +136,26 @@ router.post("/signup", async (req, res) => {
     const token = createToken(user._id);
     sessionstorage.setItem("jwt", token);
 
-    
+
     var transporter = nodemailer.createTransport({
       host: "smtp-mail.outlook.com", // hostname
       secureConnection: false, // TLS requires secureConnection to be false
       port: 587, // port for secure SMTP
       auth: {
-        user: process.env.MAIL_ID,
-        pass: process.env.MAIL_PASS
+        user: "arshiaputhran@outlook.com",
+        pass: "aditya12"
       },
       tls: {
         ciphers: 'SSLv3'
       }
     });
 
-    // const verifyLink = `http://${req.headers.host}/verify-email?uid=${user._id}`
-    const verifyLink = `https://d3crypt.ieeemanipal.com/verification/${token}`
+    const verifyLink = `http://${req.headers.host}/verify-email?uid=${user._id}`
+    // const verifyLink = `https://d3crypt.ieeemanipal.com/verification/${token}`
     const message = verifyTemplate(username, verifyLink, email);
 
     const options = {
-      from: process.env.MAIL_ID,
+      from: "arshiaputhran@outlook.com",
       to: email,
       subject: "Email Verification",
       text: `go to this link: `,
@@ -186,10 +186,12 @@ router.post("/signup", async (req, res) => {
 
 router.get("/verify-email", async (req, res) => {
   try {
-    let token = req.headers['x-access-token'];
-    var base64Payload = token.split('.')[1];
-    var payload = Buffer.from(base64Payload, 'base64');
-    var userID = JSON.parse(payload.toString()).id; 
+    // let token = req.headers['x-access-token'];
+    // console.log(token);
+    // var base64Payload = token.split('.')[1];
+    // var payload = Buffer.from(base64Payload, 'base64');
+    // var userID = JSON.parse(payload.toString()).id;
+    var userID = req.query.uid;
     const user = await User.findOne({ _id: userID });
     if (!user) {
       console.log("could not find user");
@@ -198,10 +200,11 @@ router.get("/verify-email", async (req, res) => {
         .updateOne({ isVerified: true })
         .then(console.log("user email is verified"));
     }
+    res.send(verifiedPage());
   } catch (error) {
     console.log(error);
+    res.send("verification failed");
   }
-  // res.send(verifiedPage());
 });
 
 /* *********************************************************** */
@@ -256,24 +259,18 @@ router.post("/forgot", async (req, res) => {
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
 
-    const link = `https://d3crypt.ieeemanipal.com/reset/${token}`;
+    const link = `http://localhost:3000/reset/${token}`;
+    // const link = `http://${req.headers.host}/reset-password?uid=${user._id}`;
 
     console.log(link);
 
-    // var transporter = nodemailer.createTransport({
-    //   service: "hotmail",
-    //   auth: {
-    //     user: "shreyas.shah@learner.manipal.edu",
-    //     pass: "shahlshreyas@19",
-    //   },
-    // });
     var transporter = nodemailer.createTransport({
       host: "smtp-mail.outlook.com", // hostname
       secureConnection: false, // TLS requires secureConnection to be false
       port: 587, // port for secure SMTP
       auth: {
-        user: process.env.MAIL_ID,
-        pass: process.env.MAIL_PASS
+        user: "arshiaputhran@outlook.com",
+        pass: "aditya12"
       },
       tls: {
         ciphers: 'SSLv3'
@@ -282,7 +279,7 @@ router.post("/forgot", async (req, res) => {
 
     const message = passwordTemplate(user.username, link, email);
     const options = {
-      from: process.env.MAIL_ID,
+      from: "arshiaputhran@outlook.com",
       to: email,
       subject: "password reset link",
       text: `go to this link: `,
@@ -301,7 +298,7 @@ router.post("/forgot", async (req, res) => {
 });
 
 router.patch("/reset", async (req, res) => {
-  const {token, newPass } = req.body;
+  const { token, newPass } = req.body;
   console.log(req.body);
   // const user = await User.findOne({ id }).lean();
   // if (!user) {
@@ -321,9 +318,9 @@ router.patch("/reset", async (req, res) => {
     try {
       console.log(newPass);
       var base64Payload = token.split('.')[1];
-    var payload = Buffer.from(base64Payload, 'base64');
-    var id = JSON.parse(payload.toString()).id;
-    console.log(id);
+      var payload = Buffer.from(base64Payload, 'base64');
+      var id = JSON.parse(payload.toString()).id;
+      console.log(id);
       const hash_password = await bcrypt.hash(newPass, 10);
       const updatedUser = await User.updateOne(
         { _id: id },

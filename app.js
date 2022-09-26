@@ -1,4 +1,3 @@
-require('dotenv').config();
 
 const express = require('express');
 const cors = require("cors");
@@ -54,7 +53,7 @@ app.use(cookieParser());
 
 // //testing db
 
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect("mongodb+srv://shreyaslshah:shreyasshah@cluster0.bakje.mongodb.net/decrypt?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
