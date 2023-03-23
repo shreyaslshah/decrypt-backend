@@ -23,14 +23,13 @@ router.get("/", checkJWT, checkIsVerified, async (req, res) => {
     var u = await User.findOne({ _id: userID }).select("-_id -password -noofattempts");
     let current = u.currentQuestion;
 
-    if (current >= 30) {
+    if (current >= 5) {
        return res.send("Congratulations!, you're done with all the questions");
     }
 
     console.log(u.currentQuestion);
     let cq = await Question.findOne({ index: u.questions[current] }).select("-answer -hint_1 -hint_2");
     // console.log(cq);
-    console.log(cq.index);
     res.json({ question: cq, user: u });
   } catch (err) {
     console.log(err);
